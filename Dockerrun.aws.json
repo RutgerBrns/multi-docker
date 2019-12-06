@@ -1,0 +1,36 @@
+{
+	"AWSEBDockerrunVersion": 2,
+	"containerDefinitions": [
+		{ 
+			"name": "client",
+			"image": "poespas/multi-client",
+			"hostname": "client",
+			"essential": false
+		},
+		{ 
+			"name": "worker",
+			"image": "poespas/multi-worker",
+			"hostname": "worker",
+			"essential": false
+		},
+		{ 
+			"name": "server",
+			"image": "poespas/multi-sever",
+			"hostname": "api",
+			"essential": false
+		},
+		{ 
+			"name": "nginx",
+			"image": "poespas/multi-nginx",
+			"hostname": "nginx",
+			"essential": true,
+			"portMappings": [
+				{
+					"hostPort": 80,
+					"containerPort": 80
+				}
+			],
+			"links": ["client", "server"]
+		}
+	]
+}
