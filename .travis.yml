@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t poespas/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true poespas/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t poespas/multi-client ./client
+  - docker build -t poespas/multi-nginx ./nginx 
+  - docker build -t poespas/multi-server ./server 
+  - docker build -t poespas/multi-worker ./worker 
+  #login to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  #Take these images and push them to docker
+  - docker push poespas/multi-client
+  - docker push poespas/multi-nginx
+  - docker push poespas/multi-worker
+  - docker push poespas/multi-server
